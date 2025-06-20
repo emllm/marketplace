@@ -1,17 +1,31 @@
-# marketplace/Dockerfile
-FROM node:18-alpine
+# Build stage
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
+# Copy package files
 COPY package*.json ./
-RUN npm install
 
+# Install dependencies
+RUN npm ci --silent
+
+# Copy source code
 COPY . .
+
+# Build the application
 RUN npm run build
 
-FROM nginx:alpine
-COPY --from=0 /app/build /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Production stage
+FROM nginx:1.25.3-alpine
 
-EXPOSE 3000
+# Copy built assets from builder
+COPY --from=builder /app/build /usr/share/nginx/html
+
+# Copy nginx configuration
+COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80 for HTTP
+EXPOSE 80
+
+# Start nginx
 CMD ["nginx", "-g", "daemon off;"]
