@@ -1,0 +1,6 @@
+pyclamd==0.4.0
+yara-python==4.3.1
+requests==2.31.0
+python-magic==0.4.27
+hashlib
+ssdeep==3.4

@@ -1,0 +1,127 @@
+# docker-compose.yml - Minimal AI Email Distribution System
+version: '3.8'
+
+services:
+  # AI Server
+  ai-server:
+    build: ./server
+    container_name: ai-server
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/ai_email_db
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${JWT_SECRET}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./server/generated_apps:/app/generated_apps
+    networks:
+      - ai-network
+
+  # Email Marketplace
+  marketplace:
+    build: ./marketplace
+    container_name: marketplace
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - ai-server
+    networks:
+      - ai-network
+
+  # Desktop Client
+  client:
+    build: ./client
+    container_name: client
+    environment:
+      - IMAP_HOST=${IMAP_HOST}
+      - IMAP_USER=${IMAP_USER}
+      - IMAP_PASS=${IMAP_PASS}
+      - CLIENT_ID=${CLIENT_ID}
+    volumes:
+      - ./client/downloads:/app/downloads
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - ai-network
+    privileged: true
+
+  # Database
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=ai_email_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ai-network
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ai-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  ai-network:
+    driver: bridge
+    depends_on:
+      - ai-server
+      - email-marketplace
+    networks:
+      - ai-email-network
+
+  # Email Security Scanner
+  security-scanner:
+    build:
+      context: ./security-scanner
+      dockerfile: Dockerfile
+    container_name: security-scanner
+    environment:
+      - CLAMAV_HOST=clamav
+      - CLAMAV_PORT=3310
+    depends_on:
+      - clamav
+    networks:
+      - ai-email-network
+
+  # ClamAV Antivirus
+  clamav:
+    image: clamav/clamav:latest
+    container_name: clamav-scanner
+    volumes:
+      - clamav_data:/var/lib/clamav
+    networks:
+      - ai-email-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  clamav_data:
+
+networks:
+  ai-email-network:
+    driver: bridge

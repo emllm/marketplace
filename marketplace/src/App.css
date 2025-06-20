@@ -1,0 +1,150 @@
+/* marketplace/src/App.css */
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+}
+
+.app-header h1 {
+  margin: 0 0 20px 0;
+  font-size: 2.5em;
+}
+
+.email-input {
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 25px;
+  width: 300px;
+  text-align: center;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.chat-section, .quick-apps {
+  background: #f8f9fa;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.chat-history {
+  height: 300px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: white;
+  border-radius: 10px;
+}
+
+.message {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.message.user {
+  background: #e3f2fd;
+  margin-left: 20px;
+}
+
+.message.assistant {
+  background: #f3e5f5;
+  margin-right: 20px;
+}
+
+.message strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.message p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.chat-input {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.chat-input button {
+  padding: 12px 24px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.chat-input button:hover {
+  background: #5a6fd8;
+}
+
+.chat-input button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.app-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.app-buttons button {
+  padding: 20px;
+  font-size: 18px;
+  background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.app-buttons button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+
+  .email-input {
+    width: 100%;
+    max-width: 300px;
+  }
+}
